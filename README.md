@@ -1,5 +1,15 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+
+## Tech Stack
+
+1. [TypeScript](https://github.com/microsoft/TypeScript)
+2. [Next.js](https://nextjs.org/)
+3. [Chakra UI](https://github.com/chakra-ui/chakra-ui)
+4. [React Icons](https://github.com/react-icons/react-icons)
+5. [Next Reveal](https://github.com/ritmillio/next-reveal)
+6. [Recoil](https://github.com/facebookexperimental/Recoil)
+
 ## Getting Started
 
 First, run the development server:
