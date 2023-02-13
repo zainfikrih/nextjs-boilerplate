@@ -1,0 +1,18 @@
+{
+    "theme_color": "#7C7551",
+    "background_color": "#fff",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/",
+    "name": "NextJS 13",
+    "short_name": "NextJS",
+    "description": "NextJS Boilerplate",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}
