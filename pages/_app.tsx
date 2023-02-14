@@ -1,8 +1,12 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
-import { ChakraProvider, extendTheme } from '@chakra-ui/react'
+import { ChakraProvider, extendTheme, useToast } from '@chakra-ui/react'
 import { theme as chakraTheme } from '@chakra-ui/react'
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot } from 'recoil'
+import { SWRConfig } from 'swr'
+import { RecoilEnv } from 'recoil'
+
+RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false
 
 const theme = extendTheme({
   colors: {
@@ -70,11 +74,40 @@ const theme = extendTheme({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+
+  const fetcher = (url: string, data: any) => {
+    const options: RequestInit = {
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        // token: session.access_token,
+      }),
+      credentials: 'same-origin',
+    }
+    if (data) {
+      options.method = 'POST'
+      options.body = JSON.stringify(data)
+    }
+    return fetch(url, options).then((res) => {
+      if (!res.ok) {
+        const error = new Error('An error occurred while fetching the data.')
+
+        error.cause = res.json()
+        error.name = res.status.toString()
+
+        throw error;
+      }
+      return res.json()
+    })
+  }
+
+
   return (
-    <RecoilRoot>
-      <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </RecoilRoot>
+    <SWRConfig value={{ fetcher }}>
+      <RecoilRoot>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </RecoilRoot>
+    </SWRConfig>
   )
 }

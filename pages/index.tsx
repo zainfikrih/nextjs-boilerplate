@@ -1,28 +1,55 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import { RevealWrapper } from 'next-reveal'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { textState, charCountState } from '@/atoms/text.atom'
 import styled from '@emotion/styled'
+import useSWR, { useSWRConfig } from 'swr'
+import { Button, Image, Img, Spinner, useToast } from '@chakra-ui/react'
+import { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
-const TextInput = styled('div')`
-  background-color: 'black',
-  background: 'black',
-  height: '130px'
-`
-
 export default function Home() {
+  const { fetcher, mutate } = useSWRConfig()
+  const { data, error, isLoading } = useSWR('https://dummyjson.com/products/1')
+  const [add, setAdd] = useState({
+    title: 'Nissan Silvia'
+  })
+
+  const toast = useToast()
+
   const [text, setText] = useRecoilState(textState)
   const count = useRecoilValue(charCountState)
 
   const onChange = (event: any) => {
     setText(event.target.value);
-  };
+    setAdd({ title: event.target.value })
+  }
 
+  const handleAdd = async () => {
+    if (fetcher) await fetcher('https://dummyjson.com/products/add', add)
+    mutate('https://dummyjson.com/products/1') // Update data after add
+  }
+
+  if (error) toast({
+    title: error.message,
+    status: 'error',
+    isClosable: true,
+  })
+
+  if (data) {
+    // handle success
+  }
+
+  if (isLoading) return (<Spinner
+    thickness='4px'
+    speed='0.65s'
+    emptyColor='gray.200'
+    color='blue.500'
+    size='xl'
+  />)
 
   return (
     <>
@@ -43,6 +70,7 @@ export default function Home() {
             Echo: {text}
             <br />
             <>Character Count: {count}</>
+            <Button onClick={() => handleAdd()}>ADD</Button>
           </p>
         </div>
 
@@ -50,11 +78,8 @@ export default function Home() {
           <div className={styles.center}>
             <Image
               className={styles.logo}
-              src="/next.svg"
+              src={`${data.images[0]}`}
               alt="Next.js Logo"
-              width={180}
-              height={37}
-              priority
             />
             <div className={styles.thirteen}>
               <Image
@@ -62,7 +87,6 @@ export default function Home() {
                 alt="13"
                 width={40}
                 height={31}
-                priority
               />
             </div>
           </div>
